@@ -1,0 +1,249 @@
+﻿<Window x:Class="socketchat.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:socketchat" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        ResizeMode="NoResize"
+        Height="600" Width="800" Closing="Window_Closing">
+    <TabControl
+        x:Name="MainTabControl"
+        Width="800"
+        TabStripPlacement="Top"
+        SelectedIndex="0">
+        <TabItem Header="Чат">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Column="2" Margin="8">
+                    <TextBox x:Name="IpAdressBox" FontSize="19" materialDesign:TextFieldAssist.UnderlineBrush="#540EE8" GotFocus="IpAdressBox_GotFocus" Margin="2" Text="IP-Adress" FontFamily="VK Sans Display"></TextBox>
+                    <TextBox x:Name="PortAdressBox" FontSize="19" materialDesign:TextFieldAssist.UnderlineBrush="#540EE8" Margin="2" Text="Port" FontFamily="VK Sans Display" GotFocus="PortAdressBox_GotFocus"></TextBox>
+                </StackPanel>
+                <Button x:Name="ConnectButton" Background="#540EE8" Grid.Column="3" Grid.Row="0" Margin="20" FontSize="15" Click="ConnectButton_Click" FontFamily="VK Sans Display">Подключиться</Button>
+                <Button x:Name="DisconnectButton" Background="#540EE8" Grid.Column="3" Grid.Row="1" Margin="20" IsEnabled="False" Visibility="Hidden" FontSize="15" Click="DisconnectButton_Click" FontFamily="VK Sans Display">Отключиться</Button>
+                <Button x:Name="SendFileButton" Background="#FF0000" Grid.Column="2" Grid.Row="3" Height="70" Width="70" HorizontalAlignment="Left" Margin="20,0,0,0" Click="SendFileButton_Click" IsEnabled="False" Visibility="Hidden">
+                    <materialDesign:PackIcon Kind="FileUpload" Height="40" Width="40"/>
+                </Button>
+                <Button x:Name="SendMessagetButton" Background="#FF0000" Grid.Column="2" Grid.Row="4" Margin="20" FontSize="15" Height="40" Click="SendMessagetButton_Click" IsEnabled="False" Visibility="Hidden" FontFamily="VK Sans Display">Отправить</Button>
+                <TextBox x:Name="sendMessageTextBox" FontFamily="VK Sans Display" BorderBrush="#540EE8" BorderThickness="2" Margin="10,20" Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" FontSize="20" TextWrapping="Wrap" TextChanged="sendMessageTextBox_TextChanged" IsEnabled="False"></TextBox>
+                <ListBox x:Name="messageList" BorderBrush="#540EE8" BorderThickness="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="4" Margin="10">
+                    <ListBox.Resources>
+                        <DataTemplate DataType="{x:Type local:Message}">
+                            <StackPanel Orientation="Horizontal" MinHeight="60" HorizontalAlignment="Left">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu DataContext="{x:Type local:Message}">
+                                        <MenuItem Header="Исследовать" Click="SearchUser"></MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <Ellipse Margin="5,5,5,0" Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" Stroke="#540EE8" StrokeDashArray="2" StrokeThickness="3">
+                                    <Ellipse.Fill>
+                                        <ImageBrush Stretch="UniformToFill" ImageSource="{Binding Path=ImgProfilePath}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                                    <StackPanel Orientation="Horizontal" Width="270">
+                                        <TextBlock Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="{Binding Path=UserLogin}" FontSize="14" TextAlignment="Left" Width="100"></TextBlock>
+                                        <TextBlock Text="{Binding Path=DateOfMessage,StringFormat={}{0:HH:mm:ss}}" FontFamily="VK Sans Display" FontSize="13" TextAlignment="Right" Width="170"></TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Path=Content}" FontFamily="VK Sans Display" FontSize="15" Width="270" TextWrapping="Wrap" TextAlignment="Left"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:ImageMessage}">
+                            <StackPanel Orientation="Horizontal" Height="270" HorizontalAlignment="Left">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu DataContext="{x:Type local:ImageMessage}">
+                                        <MenuItem Header="Исследовать" Click="SearchUser"></MenuItem>
+                                        <MenuItem Header="Открыть в браузере" Click="BrowserOpen"></MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <Ellipse Margin="5,5,5,0" Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" Stroke="#540EE8" StrokeDashArray="2" StrokeThickness="3">
+                                        <Ellipse.Fill>
+                                            <ImageBrush Stretch="UniformToFill" ImageSource="{Binding Path=ImgProfilePath}"/>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal" Width="270" Margin="0,0,0,5">
+                                        <TextBlock Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="{Binding Path=UserLogin}" FontSize="14" TextAlignment="Left" Width="100"></TextBlock>
+                                        <TextBlock Text="{Binding Path=DateOfMessage,StringFormat={}{0:HH:mm:ss}}" FontFamily="VK Sans Display" FontSize="13" TextAlignment="Right" Width="170"></TextBlock>
+                                    </StackPanel>
+                                    <Border BorderBrush="Black" BorderThickness="2" CornerRadius="3">
+                                        <Image Source="{Binding Path=ImgContentPath}" Height="240" Width="270"></Image>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:FileMessage}">
+                            <StackPanel Orientation="Horizontal" Height="100" HorizontalAlignment="Left">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu DataContext="{x:Type local:FileMessage}">
+                                        <MenuItem Header="Исследовать" Click="SearchUser"></MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <Ellipse Margin="5,5,5,0" Height="50" Width="50" HorizontalAlignment="Left" Stroke="#540EE8" StrokeDashArray="2" StrokeThickness="3" VerticalAlignment="Top">
+                                    <Ellipse.Fill>
+                                        <ImageBrush Stretch="UniformToFill" ImageSource="{Binding Path=ImgProfilePath}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                                    <StackPanel Orientation="Horizontal" Width="270">
+                                        <TextBlock Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="{Binding Path=UserLogin}" FontSize="14" TextAlignment="Left" Width="100" FontFamily="VK Sans Display"></TextBlock>
+                                        <TextBlock Text="{Binding Path=DateOfMessage,StringFormat={}{0:HH:mm:ss}}" FontFamily="VK Sans Display" FontSize="13" TextAlignment="Right" Width="170"></TextBlock>
+                                    </StackPanel>
+                                    <Border CornerRadius="3" BorderThickness="3" BorderBrush="Black">
+                                        <StackPanel Orientation="Horizontal" Width="270" Height="60" VerticalAlignment="Center">
+                                            <StackPanel Height="60" Width="230" HorizontalAlignment="Left" Orientation="Vertical">
+                                                <TextBlock Margin="5" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="{Binding Path=FileName}" FontSize="14" FontFamily="VK Sans Display"></TextBlock>
+                                                <TextBlock Margin="5" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="{Binding Path=FileSizeDisplay}" FontSize="13" FontFamily="VK Sans Display"></TextBlock>
+                                            </StackPanel>
+                                            <Button x:Name="DownloadFileButton" Style="{StaticResource MaterialDesignFloatingActionMiniDarkButton}" Height="35" Width="35" Click="DownloadFileButton_Click">
+                                                <materialDesign:PackIcon Kind="DownloadBox"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.Resources>
+                </ListBox>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Профиль">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Ellipse x:Name="imgprofile" Height="200" Width="200" Stroke="#540EE8" StrokeDashArray="2" StrokeThickness="3" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="3" Margin="5" Loaded="imgprofile_Loaded" MouseLeftButtonDown="imgprofile_MouseLeftButtonDown">
+                    <Ellipse.Fill>
+                        <ImageBrush x:Name="ProfileImage" Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBox x:Name="ProfileLabel" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="20" Grid.Column="1" Grid.ColumnSpan="3" IsReadOnly="True" Grid.Row="3" Margin="5" Loaded="ProfileLabel_Loaded" VerticalAlignment="Center" FontFamily="VK Sans Display"></TextBox>
+                <TextBox x:Name="UserSurnameBox" Style="{StaticResource MaterialDesignOutlinedTextBox}" Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="4" FontSize="20" Margin="5" VerticalAlignment="Center" IsReadOnly="True" Loaded="UserSurnameBox_Loaded">Фамилия</TextBox>
+                <TextBox x:Name="UserNameBox" Style="{StaticResource MaterialDesignOutlinedTextBox}" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4" Margin="5" FontSize="20" FontFamily="VK Sans Display" VerticalAlignment="Center" IsReadOnly="True" Loaded="UserNameBox_Loaded">Имя</TextBox>
+                <TextBox x:Name="UserPatronumBox" Style="{StaticResource MaterialDesignOutlinedTextBox}" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="4" Margin="5" FontSize="20" FontFamily="VK Sans Display" VerticalAlignment="Center" IsReadOnly="True" Loaded="UserPatronumBox_Loaded">Отчество</TextBox>
+                <TextBox x:Name="DescriptionBox" Style="{StaticResource MaterialDesignOutlinedTextBox}" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" TextWrapping="Wrap" Margin="5" FontSize="20" FontFamily="VK Sans Display" IsReadOnly="True" Loaded="DescriptionBox_Loaded">Описание</TextBox>
+                <DatePicker x:Name="DateOfBirthBox" Style="{StaticResource MaterialDesignOutlinedDatePicker}" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="3" Margin="5" FontSize="20" IsEnabled="False" Loaded="DateOfBirthBox_Loaded"></DatePicker>
+                <Button x:Name="ChangeUserdataButton" Grid.Column="7" Grid.Row="3" Height="60" Width="60" Click="ChangeUserdataButton_Click">
+                    <materialDesign:PackIcon x:Name="ChangeUserDataIcon" Kind="LeadPencil" Height="30" Width="30"/>
+                </Button>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Поиск">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Ellipse x:Name="imgUserProfile" Height="180" Width="180" Stroke="#540EE8" StrokeDashArray="2" StrokeThickness="3" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="5" Margin="5">
+                    <Ellipse.Fill>
+                        <ImageBrush x:Name="UserProfileImage" Stretch="UniformToFill" ImageSource="https://i.imgur.com//mnXOlcq.png"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock x:Name="UserSearchLoginBox" Grid.Column="1" Grid.Row="4" FontSize="17" VerticalAlignment="Center">Логин:</TextBlock>
+                <TextBlock x:Name="UserSearchNameBox" Grid.Column="1" Grid.Row="5" FontSize="17" VerticalAlignment="Center">Имя:</TextBlock>
+                <TextBlock x:Name="UserSearchPatronumBox" Grid.Column="1" Grid.Row="6" FontSize="17" VerticalAlignment="Center">Отчество:</TextBlock>
+                <TextBlock x:Name="UserSearchSurnameBox" Grid.Column="1" Grid.Row="7" FontSize="17" VerticalAlignment="Center">Фамилия:</TextBlock>
+                <TextBlock x:Name="UserSearchDateOfBirthBox" Grid.Column="1" Grid.Row="8" FontSize="17" VerticalAlignment="Center">Дата рождения:</TextBlock>
+                <TextBlock x:Name="UserSearchDescriptionBox" Grid.Column="1" Grid.Row="9" FontSize="17" VerticalAlignment="Center">Описание:</TextBlock>
+                <TextBox x:Name="searchUserBlock" Margin="6" FontSize="15" Grid.Row="0" FontFamily="VK Sans Display" Grid.Column="0" materialDesign:HintAssist.Hint="Введите фамилию,отчество,имя или логин"></TextBox>
+                <Button x:Name="searchUserButton" Grid.Column="0" Grid.Row="1" Width="150" FontFamily="VK Sans Display" FontSize="15" Click="searchUserButton_Click" Height="32" Margin="125,10,125,0" VerticalAlignment="Top">Поиск</Button>
+                <ListBox x:Name="userList" BorderBrush="#540EE8" BorderThickness="1" Grid.Column="0" Grid.Row="2" Grid.RowSpan="7" Margin="10">
+                    <ListBox.Resources>
+                        <DataTemplate DataType="{x:Type local:User}">
+                            <StackPanel Orientation="Horizontal" MinHeight="60" HorizontalAlignment="Left">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu DataContext="{x:Type local:User}">
+                                        <MenuItem Header="Исследовать" Click="DisplayUser"></MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <Ellipse Margin="5,5,5,0" Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" Stroke="#540EE8" StrokeDashArray="2" StrokeThickness="3">
+                                    <Ellipse.Fill>
+                                        <ImageBrush Stretch="UniformToFill" ImageSource="{Binding Path=ProfileImgPath}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                                    <StackPanel Orientation="Horizontal" Width="270">
+                                        <TextBlock Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="{Binding Path=UserLogin}" FontSize="14" TextAlignment="Left" Width="270"></TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Path=UserName,StringFormat=Имя: {0}}" FontFamily="VK Sans Display" FontSize="15" Width="270" TextWrapping="Wrap" TextAlignment="Left"></TextBlock>
+                                    <TextBlock Text="{Binding Path=UserPatronum,StringFormat=Отчество: {0}}" FontFamily="VK Sans Display" FontSize="15" Width="270" TextWrapping="Wrap" TextAlignment="Left"/>
+                                    <TextBlock Text="{Binding Path=UserSurname,StringFormat=Фамилия: {0}}" FontFamily="VK Sans Display" FontSize="15" Width="270" TextWrapping="Wrap" TextAlignment="Left"/>
+                                    <TextBlock Text="{Binding Path=DateOfBirth,StringFormat=Дата рождения: {0:dd.MM.yyyy}}" FontFamily="VK Sans Display" FontSize="15" Width="270" TextWrapping="Wrap" TextAlignment="Left"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.Resources>
+                </ListBox>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Настройки">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Button x:Name="ChangeUserButton" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" FontSize="20" Height="50" Click="ChangeUserButton_Click">Поменять пользователя</Button>
+                <Button x:Name="DeleteCurrentUser" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" FontSize="20" Height="50" Click="DeleteCurrentUser_Click">Удалить аккаунт</Button>
+                <Button x:Name="ExitButton" Background="Red" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="5" FontSize="24" Height="50" Click="ExitButton_Click">Выход</Button>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>
